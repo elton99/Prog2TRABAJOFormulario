@@ -7,8 +7,10 @@ package examenfinal;
 
 import Persona.Persona;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -17,12 +19,15 @@ import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+//import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+//import javafx.stage.StageStyle;
 
 public class VistaController implements Initializable {
 
@@ -42,7 +47,7 @@ public class VistaController implements Initializable {
     private TableColumn<Persona, String> ciudadCL;
 
     private final ObservableList<Persona> personas = FXCollections.observableArrayList();//Almacena los datos en forma de Lista de arreglos//
-
+private final List<Persona> listaPersona = new ArrayList<>();
     private int posicionPersonaEnTabla;//Se declara una variable de tipo entero (identifica la posicion o indice de la persona en la tabla)
     //Declaramos los TextField//
     @FXML
@@ -66,6 +71,10 @@ public class VistaController implements Initializable {
     private Button nuevoBT;
     @FXML
     private TextField BuscarTF;
+    @FXML
+    private RadioButton buttonMasculino;
+    @FXML
+    private RadioButton buttonFemenino;
 
     @FXML
     private void aniadir(ActionEvent event) {
@@ -76,6 +85,7 @@ public class VistaController implements Initializable {
         persona.setTelefono(telefonoTF.getText());
         persona.setCiudad(ciudadTF.getText());
         personas.add(persona);//Permite añadir al ObservableList los datos//
+        
     }
 
     @FXML
@@ -185,7 +195,9 @@ public class VistaController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        Platform.runLater(() -> {
+            nombreTF.requestFocus();
+        });
         this.inicializarTablaPersonas();
         modificarBT.setDisable(true);
         eliminarBT.setDisable(true);
@@ -194,4 +206,19 @@ public class VistaController implements Initializable {
         final ObservableList<Persona> tablaPersonaSel = tablaPersonas.getSelectionModel().getSelectedItems();
         tablaPersonaSel.addListener(selectorTablaPersonas);
     }
+    @FXML
+    public void Masculino() {
+        if (buttonMasculino.isSelected()) {
+            
+            buttonFemenino.setSelected(false);
+        }
+    }
+
+    @FXML
+    private void Femenino(ActionEvent event) {
+        if(buttonFemenino.isSelected()){
+        buttonMasculino.setSelected(false);
+        }
+    }
+    
 }
