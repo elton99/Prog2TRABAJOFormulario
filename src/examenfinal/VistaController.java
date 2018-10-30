@@ -6,6 +6,7 @@
 package examenfinal;
 
 import Persona.Persona;
+import java.awt.event.KeyEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +18,10 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 //import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -27,6 +30,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.stage.StageStyle;
 //import javafx.stage.StageStyle;
 
 public class VistaController implements Initializable {
@@ -47,7 +52,7 @@ public class VistaController implements Initializable {
     private TableColumn<Persona, String> ciudadCL;
 
     private final ObservableList<Persona> personas = FXCollections.observableArrayList();//Almacena los datos en forma de Lista de arreglos//
-private final List<Persona> listaPersona = new ArrayList<>();
+    private final List<Persona> listaPersona = new ArrayList<>();
     private int posicionPersonaEnTabla;//Se declara una variable de tipo entero (identifica la posicion o indice de la persona en la tabla)
     //Declaramos los TextField//
     @FXML
@@ -85,7 +90,6 @@ private final List<Persona> listaPersona = new ArrayList<>();
         persona.setTelefono(telefonoTF.getText());
         persona.setCiudad(ciudadTF.getText());
         personas.add(persona);//Permite añadir al ObservableList los datos//
-        
     }
 
     @FXML
@@ -206,19 +210,24 @@ private final List<Persona> listaPersona = new ArrayList<>();
         final ObservableList<Persona> tablaPersonaSel = tablaPersonas.getSelectionModel().getSelectedItems();
         tablaPersonaSel.addListener(selectorTablaPersonas);
     }
+
     @FXML
     public void Masculino() {
         if (buttonMasculino.isSelected()) {
-            
+
             buttonFemenino.setSelected(false);
         }
     }
 
     @FXML
     private void Femenino(ActionEvent event) {
-        if(buttonFemenino.isSelected()){
-        buttonMasculino.setSelected(false);
+        if (buttonFemenino.isSelected()) {
+            buttonMasculino.setSelected(false);
         }
     }
-    
+
+    @FXML
+    private void aniadir(javafx.scene.input.KeyEvent event) {
+    }
+
 }

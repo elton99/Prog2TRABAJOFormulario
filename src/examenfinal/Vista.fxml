@@ -79,11 +79,11 @@
                      <tooltip>
                         <Tooltip text="Por favor ingrese numero de telefono" />
                      </tooltip></TextField>
-                  <TextField fx:id="ciudadTF" layoutX="15.0" layoutY="223.0" prefHeight="26.0" prefWidth="219.0" promptText="Ingrese ciudad">
+                  <TextField fx:id="ciudadTF" layoutX="15.0" layoutY="223.0" onAction="#aniadir" prefHeight="26.0" prefWidth="219.0" promptText="Ingrese ciudad">
                      <tooltip>
                         <Tooltip text="Por favor ingrese ciudad" />
                      </tooltip></TextField>
-                  <Button fx:id="aniadirBT" layoutX="18.0" layoutY="413.0" mnemonicParsing="false" onAction="#aniadir" prefHeight="26.0" prefWidth="99.0" text="Añadir" />
+                  <Button fx:id="aniadirBT" layoutX="18.0" layoutY="413.0" mnemonicParsing="false" onAction="#aniadir" onKeyPressed="#aniadir" prefHeight="26.0" prefWidth="99.0" text="Añadir" />
                   <Button fx:id="modificarBT" layoutX="18.0" layoutY="445.0" mnemonicParsing="false" onAction="#modificar" prefHeight="26.0" prefWidth="99.0" text="Modificar" />
                   <Button fx:id="eliminarBT" layoutX="126.0" layoutY="445.0" mnemonicParsing="false" onAction="#eliminar" prefHeight="26.0" prefWidth="99.0" text="Eliminar" />
                   <Button fx:id="nuevoBT" layoutX="126.0" layoutY="413.0" mnemonicParsing="false" onAction="#nuevo" prefHeight="26.0" prefWidth="99.0" text="NUEVO" />
@@ -103,7 +103,7 @@
                         <Font name="DejaVu Sans Mono Bold" size="13.0" />
                      </font>
                   </RadioButton>
-                  <RadioButton fx:id="buttonFemenino" layoutX="123.0" layoutY="337.0" mnemonicParsing="false" onAction="#Femenino" text="Femenino" textFill="#ddd7d7">
+                  <RadioButton fx:id="buttonFemenino" layoutX="123.0" layoutY="337.0" mnemonicParsing="false" onAction="#Femenino" selected="true" text="Femenino" textFill="#ddd7d7">
                      <font>
                         <Font name="DejaVu Sans Mono Bold" size="13.0" />
                      </font>
