@@ -6,7 +6,7 @@
 package examenfinal;
 
 import Persona.Persona;
-import java.awt.event.KeyEvent;
+//import java.awt.event.KeyEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +18,10 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+//import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
+//import javafx.scene.control.Alert;
 //import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -30,8 +30,14 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
-import javafx.stage.StageStyle;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
+//import javafx.scene.input.KeyCode;
+//import javafx.stage.StageStyle;
 //import javafx.stage.StageStyle;
 
 public class VistaController implements Initializable {
@@ -80,15 +86,20 @@ public class VistaController implements Initializable {
     private RadioButton buttonMasculino;
     @FXML
     private RadioButton buttonFemenino;
+    @FXML
+    private AnchorPane raiz;
 
     @FXML
-    private void aniadir(ActionEvent event) {
+    private void aniadir() {
         Persona persona = new Persona();
         persona.setNombre(nombreTF.getText());//lo que haya en el nombreTF que me lo traiga como texto(getText) y lo ponga en el atributo nombre
         persona.setApellido(apellidoTF.getText());
         persona.setCi(Integer.parseInt(ciTF.getText()));//en vez de getText se usa parseInt para valores entero//
         persona.setTelefono(telefonoTF.getText());
         persona.setCiudad(ciudadTF.getText());
+        
+        
+        
         personas.add(persona);//Permite añadir al ObservableList los datos//
     }
 
@@ -104,7 +115,7 @@ public class VistaController implements Initializable {
     }
 
     @FXML
-    private void eliminar(ActionEvent event) {
+    private void eliminar() {
         personas.remove(posicionPersonaEnTabla);
     }
 
@@ -227,7 +238,14 @@ public class VistaController implements Initializable {
     }
 
     @FXML
-    private void aniadir(javafx.scene.input.KeyEvent event) {
+    private void ani() {
+        KeyCombination btonuevo =new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
+        raiz.setOnKeyPressed((KeyEvent event)->{
+        this.aniadir();
+    });
     }
+    
+    
 
 }
+
