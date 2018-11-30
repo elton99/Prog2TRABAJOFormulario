@@ -1,15 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package examenfinal;
-
 import Persona.Persona;
+import Profesor.Profesores;
 //import java.awt.event.KeyEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -21,43 +17,53 @@ import javafx.event.ActionEvent;
 //import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 //import javafx.scene.control.Alert;
 //import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
 //import javafx.scene.input.KeyCode;
 //import javafx.stage.StageStyle;
 //import javafx.stage.StageStyle;
 
 public class VistaController implements Initializable {
+    
+    EntityManagerFactory emf=Persistence.createEntityManagerFactory("ExamenFinalPU");
+    EntityManager em =emf.createEntityManager();
 
     private Label label;
     //Declaramos la tabla y las columnas//
     @FXML
-    private TableView<Persona> tablaPersonas;//Se instancia para obtener los atributos de la clase Persona// 
+    private TableView<Profesores> tablaPersonas;//Se instancia para obtener los atributos de la clase Persona// 
     @FXML
-    private TableColumn<Persona, String> nombreCL;
+    private TableColumn<Profesores, String> nombreCL;
     @FXML
-    private TableColumn<Persona, String> apellidoCL;
+    private TableColumn<Profesores, String> apellidoCL;
     @FXML
-    private TableColumn<Persona, Integer> ciCL;
+    private TableColumn<Profesores, Integer> ciCL;
     @FXML
-    private TableColumn<Persona, String> telefonoCL;
+    private TableColumn<Profesores, String> telefonoCL;
     @FXML
-    private TableColumn<Persona, String> ciudadCL;
+    private TableColumn<Profesores, String> ciudadCL;
 
     private final ObservableList<Persona> personas = FXCollections.observableArrayList();//Almacena los datos en forma de Lista de arreglos//
+    private final ObservableList<Profesores> lista = FXCollections.observableArrayList();//Almacena los datos en forma de Lista de arreglos//
     private final List<Persona> listaPersona = new ArrayList<>();
     private int posicionPersonaEnTabla;//Se declara una variable de tipo entero (identifica la posicion o indice de la persona en la tabla)
     //Declaramos los TextField//
@@ -88,35 +94,63 @@ public class VistaController implements Initializable {
     private RadioButton buttonFemenino;
     @FXML
     private AnchorPane raiz;
-
+    
+   // List<Profesores> lista=new ArrayList();
     @FXML
     private void aniadir() {
-        Persona persona = new Persona();
+        em.getTransaction().begin();
+        Profesores persona = new Profesores();
         persona.setNombre(nombreTF.getText());//lo que haya en el nombreTF que me lo traiga como texto(getText) y lo ponga en el atributo nombre
         persona.setApellido(apellidoTF.getText());
-        persona.setCi(Integer.parseInt(ciTF.getText()));//en vez de getText se usa parseInt para valores entero//
+        persona.setCi(ciTF.getText());//en vez de getText se usa parseInt para valores entero//
         persona.setTelefono(telefonoTF.getText());
-        persona.setCiudad(ciudadTF.getText());
+        persona.setDireccion(ciudadTF.getText());
+        em.persist(persona);
+        em.getTransaction().commit();
         
-        
-        
-        personas.add(persona);//Permite añadir al ObservableList los datos//
+        Platform.runLater(() -> {
+            this.iniciarDatos();
+            //em.close();
+        });
+        // Integer ci = Integer.parseInt(ciTF.getText());
+        // persona.setCi(ci);
+      
     }
 
     @FXML
     private void modificar(ActionEvent event) {
-        Persona persona = new Persona();
-        persona.setNombre(nombreTF.getText());//lo que haya en el nombreTF que me lo traiga como texto(getText) y lo ponga en el atributo nombre
-        persona.setApellido(apellidoTF.getText());
-        persona.setCi(Integer.parseInt(ciTF.getText()));//en vez de getText se usa parseInt para valores entero//
-        persona.setTelefono(telefonoTF.getText());
-        persona.setCiudad(ciudadTF.getText());
-        personas.set(posicionPersonaEnTabla, persona);//Se selecciona una fila en la tabla y trae todos los datos guardados de esa fila para poder modificar//
+        em.getTransaction().begin();
+        
+       // lista.set(posicionPersonaEnTabla, persona);//Se selecciona una fila en la tabla y trae todos los datos guardados de esa fila para poder modificar//
+        //em.persist(persona);
+        em.getTransaction().commit();
+        Platform.runLater(() ->{
+        this.iniciarDatos();
+    });
     }
 
     @FXML
     private void eliminar() {
-        personas.remove(posicionPersonaEnTabla);
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("ELIMINAR PROFESORES");
+        alert.setHeaderText("ALERTA, ALERTA, ALERTA");
+        alert.setContentText("Estás seguro de eliminar el registro?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            em.getTransaction().begin();
+        Profesores p = tablaPersonas.getSelectionModel().getSelectedItem();
+        System.out.println("Se ha seleccionado: " + p.getApellido());
+        em.remove(p);
+        em.getTransaction().commit();
+        Platform.runLater(() -> {
+            this.iniciarDatos();
+        });
+        } else {
+            System.out.println("NO");
+        }
+
+        
     }
 
     @FXML
@@ -131,19 +165,15 @@ public class VistaController implements Initializable {
         aniadirBT.setDisable(false);//Disable false (Da la opcion de añadir)
     }
     //Para selleccionar una celda en la tablaPersona//
-    private final ListChangeListener<Persona> selectorTablaPersonas = new ListChangeListener<Persona>() {
-        @Override
-        public void onChanged(ListChangeListener.Change<? extends Persona> c) {
-            ponerPersonaSeleccionada();
-        }
-
+    private final ListChangeListener<Persona> selectorTablaPersonas = (ListChangeListener.Change<? extends Persona> c) -> {
+        ponerPersonaSeleccionada();
     };
 
-    public Persona getTablaPersonasSeleccionada() {
+    public Profesores getTablaPersonasSeleccionada() {
         if (tablaPersonas != null) {
-            List<Persona> tabla = tablaPersonas.getSelectionModel().getSelectedItems();
+            List<Profesores> tabla = tablaPersonas.getSelectionModel().getSelectedItems();
             if (tabla.size() == 1) {
-                final Persona competicionSeleccionada = tabla.get(0);
+                final Profesores competicionSeleccionada = tabla.get(0);
                 return competicionSeleccionada;
             }
         }
@@ -151,15 +181,15 @@ public class VistaController implements Initializable {
     }
 
     private void ponerPersonaSeleccionada() {
-        final Persona persona = getTablaPersonasSeleccionada();
+        final Profesores persona = getTablaPersonasSeleccionada();
         posicionPersonaEnTabla = personas.indexOf(persona);
         if (persona != null) {
             //Se pone los TextField con los Datos Correspondientes//
             nombreTF.setText(persona.getNombre());
             apellidoTF.setText(persona.getApellido());
-            ciTF.setText(persona.getCi().toString());
+            ciTF.setText(persona.getCi());
             telefonoTF.setText(persona.getTelefono());
-            ciudadTF.setText(persona.getCiudad());
+            ciudadTF.setText(persona.getDireccion());
             //Se pone los botones en su estado correspondiente//
             modificarBT.setDisable(false);
             eliminarBT.setDisable(false);
@@ -169,12 +199,12 @@ public class VistaController implements Initializable {
     }
 
     public void inicializarTablaPersonas() {
-        tablaPersonas.setItems(personas);
+        tablaPersonas.setItems(lista);
         nombreCL.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         apellidoCL.setCellValueFactory(new PropertyValueFactory<>("apellido"));
         ciCL.setCellValueFactory(new PropertyValueFactory<>("ci"));
         telefonoCL.setCellValueFactory(new PropertyValueFactory<>("telefono"));
-        ciudadCL.setCellValueFactory(new PropertyValueFactory<>("ciudad"));
+        ciudadCL.setCellValueFactory(new PropertyValueFactory<>("direccion"));
 
         FilteredList<Persona> Centinela = new FilteredList<>(personas, persona -> true);
         BuscarTF.textProperty().addListener((Observar, Lista, Evaluar) -> {
@@ -202,24 +232,44 @@ public class VistaController implements Initializable {
         SortedList<Persona> BuscarDato = new SortedList<>(Centinela);
 
         // 4.crea una conexion ordenada de la lista de personas con textfield de buscar
-        BuscarDato.comparatorProperty().bind(tablaPersonas.comparatorProperty());
+       // BuscarDato.comparatorProperty().bind(tablaPersonas.comparatorProperty());
 
         // 5. Trae los datos de las personas ordenados a las filas de la tabla.
-        tablaPersonas.setItems(BuscarDato);
+       // tablaPersonas.setItems(BuscarDato);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        this.iniciarDatos();
         Platform.runLater(() -> {
-            nombreTF.requestFocus();
+        nombreTF.requestFocus();
         });
         this.inicializarTablaPersonas();
         modificarBT.setDisable(true);
-        eliminarBT.setDisable(true);
+        //eliminarBT.setDisable(true);
 
         //Seleccionar las tuplas de la tabla persona(Tupla: Es la secuencia de valores agrupados en la tabla)//
-        final ObservableList<Persona> tablaPersonaSel = tablaPersonas.getSelectionModel().getSelectedItems();
-        tablaPersonaSel.addListener(selectorTablaPersonas);
+      //  final ObservableList<Persona> tablaPersonaSel = tablaPersonas.getSelectionModel().getSelectedItems();
+       // tablaPersonaSel.addListener(selectorTablaPersonas);
+    }
+    
+    public void iniciarDatos(){
+        lista.clear();
+        TypedQuery<Profesores> consulta = em.createQuery("SELECT p FROM Profesores p ", Profesores.class);
+        lista.addAll(consulta.getResultList());
+        
+    }
+    public void modificarlista() {
+        Profesores persona = tablaPersonas.getSelectionModel().getSelectedItem();
+        System.out.println("Nombre: " + persona.getNombre());
+        nombreTF.setText(persona.getNombre());
+        modificarBT.setDisable(false);
+        eliminarBT.setDisable(false);
+        //persona.setNombre(nombreTF.getText());//lo que haya en el nombreTF que me lo traiga como texto(getText) y lo ponga en el atributo nombre
+        //persona.setApellido(apellidoTF.getText());
+        //persona.setCi(ciTF.getText());//en vez de getText se usa parseInt para valores entero//
+        //persona.setTelefono(telefonoTF.getText());
+        //persona.setDireccion(ciudadTF.getText());
     }
 
     @FXML
@@ -239,13 +289,11 @@ public class VistaController implements Initializable {
 
     @FXML
     private void ani() {
-        KeyCombination btonuevo =new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
-        raiz.setOnKeyPressed((KeyEvent event)->{
-        this.aniadir();
-    });
+        KeyCombination btonuevo = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
+        raiz.setOnKeyPressed((KeyEvent event) -> {
+            this.aniadir();
+        });
     }
-    
     
 
 }
-
